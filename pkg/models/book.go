@@ -43,3 +43,10 @@ func DeleteBook(ID int64) Book {
 	db.Where("ID=?", ID).Delete(book)
 	return book
 }
+
+func (b *Book) CreateBooks() *Book {
+	if err := db.Create(b).Error; err != nil {
+		return nil
+	}
+	return b
+}

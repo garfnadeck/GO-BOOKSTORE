@@ -84,3 +84,27 @@ func UpdateBook(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
+
+func UploadJSON(w http.ResponseWriter, r *http.Request) {
+	var books []models.Book
+
+	// Decodifique o JSON do corpo da solicitação
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&books); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Processar os dados e salvar no banco de dados
+	for _, book := range books {
+		createdBook := book.CreateBook()
+		if createdBook == nil {
+			http.Error(w, "Erro ao criar um livro", http.StatusInternalServerError)
+			return
+		}
+	}
+
+	// Responder com uma mensagem de sucesso
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Dados do JSON foram salvos no banco de dados com sucesso"))
+}
